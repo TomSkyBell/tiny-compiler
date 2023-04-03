@@ -39,14 +39,28 @@ whitespace      [ \t]+
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip white space, do nothing */}
-"{"             { char c; while ((c=input()) != '}') ;}
+"{"             { 
+                    char c;
+                    do {
+                        c = input();
+                        if (c == ENDFILE) break;
+                        if (c == '\n') lineno++;
+                    } while (c != '}');
+                }
+.               {return ERROR;}
 
 %%
 int getToken_Lex()
 {
-    yyin = source;
+    static int firstTime = TRUE;
+    if (firstTime) {
+        firstTime = FALSE;
+        yyin = source;
+        lineno++;
+    }
     TokenType tokenType = yylex();
+    fprintf(stdout, "%4d: ", lineno);
     printToken_Lex(tokenType, yytext);
 
-    return tokenType ? FALSE : TRUE;
+    return tokenType;
 }

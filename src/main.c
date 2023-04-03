@@ -10,7 +10,7 @@ int getToken_Lex();
 
 /* external variable define */
 FILE* source;
-int lineno = 1;
+int lineno = 0;
 
 int main(int argc, char* argv[])
 {
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
     }    
     fopen_s(&source, argv[1], "r");
 
-    while (!GETTOKEN()) ;
+    while (GETTOKEN()) ;
 
     return 0;
 }

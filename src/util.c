@@ -20,13 +20,13 @@ void printToken_Lex(TokenType type, const char *str)
     case UNTIL:
     case READ:
     case WRITE:
-        fprintf(stdout, "%4d: reserved word: %s\n", lineno, str);
+        fprintf(stdout, "reserved word: %s\n", str);
         break;
     case ID:
-        fprintf(stdout, "%4d: ID, name = %s\n", lineno, str);
+        fprintf(stdout, "ID, name = %s\n", str);
         break;
     case NUM:
-        fprintf(stdout, "%4d: num, value = %s\n", lineno, str);
+        fprintf(stdout, "num, value = %s\n", str);
         break;
     case ASSIGN:
     case EQ:
@@ -38,7 +38,7 @@ void printToken_Lex(TokenType type, const char *str)
     case LPAREN:
     case RPAREN:
     case SEMI:
-        fprintf(stdout, "%4d: %s\n", lineno, str);
+        fprintf(stdout, "%s\n", str);
         break;
     }
 }
