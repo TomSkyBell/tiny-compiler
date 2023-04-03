@@ -1,10 +1,14 @@
 add_rules("mode.debug", "mode.release")
-
+add_requires("winflexbison")
 add_includedirs("include")
 
 target("tiny")
     set_kind("binary")
     add_files("src/*.c")
+    add_rules("lex", "yacc")
+    add_defines("YY_NO_UNISTD_H")
+    add_packages("winflexbison")
+    add_files("src/lex/tiny.l")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

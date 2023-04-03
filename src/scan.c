@@ -1,4 +1,4 @@
-#include "scan.h"
+#include "globals.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,12 +7,11 @@
 #define TOKENLEN        50
 
 typedef enum {
-    START, NUM, ID, COMMENT, ASSIGN, DONE
+    START, INNUM, INID, INCOMMENT, INASSIGN, DONE
 } STATE;
 
 static char buf[BUFLEN];
-static size_t bufPos = 0, bufSize;
-static int lineno;
+static size_t bufPos = 0, bufSize = 0;
 static char* reservedWords[7] = {
     "if", "then", "end", "repeat", "until",
     "read", "write"
@@ -43,7 +42,7 @@ static int isoperator(int ch)
 static int getNextChar()
 {
     /* read new line from file when the buffer is full */
-    if (bufPos>=bufSize) {
+    if (bufPos >= bufSize) {
         lineno++;
         if (fgets(buf, BUFLEN, source)) {
             bufSize = strlen(buf);
@@ -83,14 +82,14 @@ int getToken()
                 saveFlag = FALSE;
                 // state = START;
             } else if (isdigit(ch)) {
-                state = NUM;
+                state = INNUM;
             } else if (isalpha(ch)) {
-                state = ID;
+                state = INID;
             } else if (ch == '{') {
                 saveFlag = FALSE;
-                state = COMMENT;
+                state = INCOMMENT;
             } else if (ch == ':') {
-                state = ASSIGN;
+                state = INASSIGN;
             } else if (isoperator(ch)) {
                 state = DONE;
             } else if (ch == EOF) {
@@ -102,7 +101,7 @@ int getToken()
                 fprintf(stderr, "Error, unrecognized symbol, lineno: %d\n", lineno);
             }
             break;
-        case NUM:
+        case INNUM:
             if (isdigit(ch)) {
                 // state = NUM;
             } else {
@@ -111,7 +110,7 @@ int getToken()
                 state = DONE;
             }
             break;
-        case ID:
+        case INID:
             if (isalpha(ch)) {
                 // state = ID;
             } else {
@@ -120,7 +119,7 @@ int getToken()
                 state = DONE;
             }
             break;
-        case COMMENT:
+        case INCOMMENT:
             saveFlag = FALSE;
             if (ch == '}') {
                 state = START;
@@ -128,7 +127,7 @@ int getToken()
                 // state = COMMENT;
             }
             break;
-        case ASSIGN:
+        case INASSIGN:
             if (ch == '=') {
                 state = DONE;
             } else {
